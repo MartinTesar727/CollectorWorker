@@ -1,10 +1,10 @@
 using System.Diagnostics;
 
-namespace UsageCollectorWorkerService.Services;
+namespace UsageCollectorWorkerService.Services.LowLevelCollecting;
 
-public class GetSystemResourcesLinux : IGetSystemResources
+public class LowLevelCollectingService : ILowLevelCollectingSevice
 {
-    public async Task<byte> GetCpuUsageInPercent()
+    public async Task<int> GetCpuUsageInPercentAsync()
     {
         string output = "";
  
@@ -23,10 +23,10 @@ public class GetSystemResourcesLinux : IGetSystemResources
         string[] lines = output.Split("\n");
         string[] memory = lines[3].Split(" ", StringSplitOptions.RemoveEmptyEntries);
         
-        return (byte)(100 - Convert.ToByte(memory[11].Split(",", StringSplitOptions.RemoveEmptyEntries)[0]));
+        return 100 - Convert.ToInt32(memory[11].Split(",", StringSplitOptions.RemoveEmptyEntries)[0]);
     }
     
-    public async Task<byte> GetRamUsageInPercent()
+    public async Task<int> GetRamUsageInPercentAsync()
     {
         string output = "";
  
@@ -45,10 +45,10 @@ public class GetSystemResourcesLinux : IGetSystemResources
         string[] lines = output.Split("\n");
         string[] memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
         
-        int Total = int.Parse(memory[1]);
-        int Used = int.Parse(memory[2]);
-        int Shared = int.Parse(memory[4]);
+        int total = int.Parse(memory[1]);
+        int used = int.Parse(memory[2]);
+        int shared = int.Parse(memory[4]);
         
-        return Convert.ToByte((Used + Shared) / (Total / 100));
+        return (used + shared) / (total / 100);
     }
 }
