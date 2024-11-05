@@ -13,6 +13,7 @@ namespace UsageCollectorWorkerService
     {
         public static void Main(string[] args)
         {
+            //Hi
             StartupArgumentsValidator.ValidateStartupArguments(args);
             
             string networkServerPath = args[0];
