@@ -35,9 +35,10 @@ namespace UsageCollectorWorkerService
             builder.Services.AddHostedService<CollectorWorker>(provider => new CollectorWorker(
                 provider.GetRequiredService<IDataHolderService>(),
                 provider.GetRequiredService<ISenderService>(),
-                provider.GetRequiredService<ISysResCollectingService>(), durationInSeconds, intervalInSeconds));
+                provider.GetRequiredService<ISysResCollectingService>(),
+                durationInSeconds,
+                intervalInSeconds));
 
-            builder.Services.AddSingleton<IValidator<RootSysResUsageValues>, RootSysResUsageValidator>();
             builder.Services.AddSingleton<IValidator<SysResUsageValues>, SysResUsageValidator>();
             
             IHost host = builder.Build();

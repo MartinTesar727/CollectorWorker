@@ -20,10 +20,12 @@ public class LowLevelCollectingService : ILowLevelCollectingSevice
             output = await process.StandardOutput.ReadToEndAsync();
         }    
         
+        // following lines parses linux process output which is reading CPU usage
         string[] lines = output.Split("\n");
-        string[] memory = lines[3].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        string[] cpuMetrics = lines[3].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        int usedCpuInPercentage = 100 - Convert.ToInt32(cpuMetrics[11].Split(",", StringSplitOptions.RemoveEmptyEntries)[0]); 
         
-        return 100 - Convert.ToInt32(memory[11].Split(",", StringSplitOptions.RemoveEmptyEntries)[0]);
+        return usedCpuInPercentage;
     }
     
     public async Task<int> GetRamUsageInPercentAsync()
@@ -42,13 +44,14 @@ public class LowLevelCollectingService : ILowLevelCollectingSevice
             output = await process.StandardOutput.ReadToEndAsync();
         }
  
+        // following lines parses linux process output which is reading RAM usage
         string[] lines = output.Split("\n");
-        string[] memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        string[] memoryMetrics = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
         
-        int total = int.Parse(memory[1]);
-        int used = int.Parse(memory[2]);
-        int shared = int.Parse(memory[4]);
+        int totalRamInstalled = int.Parse(memoryMetrics[1]);
+        int totalRamUsed = int.Parse(memoryMetrics[2]) + int.Parse(memoryMetrics[4]); 
+        int totalRamUsedInPercentage = totalRamUsed / (totalRamInstalled / 100);
         
-        return (used + shared) / (total / 100);
+        return totalRamUsedInPercentage;
     }
 }

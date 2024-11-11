@@ -10,7 +10,7 @@ public class ValidateStartupArgumentsTest : TestBase
     }
 
     [Theory]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "5"}})]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "5"}])]
     public void ValidateStartupArguments_ValidDataEntered_NoExceptionThrown(string[] cliArguments)
     {
         //Arrange
@@ -20,10 +20,10 @@ public class ValidateStartupArgumentsTest : TestBase
     }
 
     [Theory]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "5", "6"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "20"}})]
-    [InlineData(new object[] {new string[] { }})]
-    [InlineData(new object[] {null})]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "5", "6"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "20"}])]
+    [InlineData([new string[] { }])]
+    [InlineData([null])]
     public void ValidateStartupArguments_IncorrectNumberOfArguments_ArgumentExceptionThrown(string[] cliArguments)
     {
         //Arrange
@@ -35,9 +35,9 @@ public class ValidateStartupArgumentsTest : TestBase
     }
     
     [Theory]
-    [InlineData(new object[] {new string[] { "http://192..168.0.55:5000/api/resourceusage/readings", "20", "5"}})] // double dot
-    [InlineData(new object[] {new string[] { "htt://192.168.0.55:5000/api/resourceusage/readings", "20", "5"}})] // http
-    [InlineData(new object[] {new string[] { "http://168.0.55:5000/api/resourceusage/readings", "20", "5"}})] // 3 octetcs instead of 4
+    [InlineData([new [] { "http://192..168.0.55:5000/api/resourceusage/readings", "20", "5"}])] // double dot
+    [InlineData([new [] { "htt://192.168.0.55:5000/api/resourceusage/readings", "20", "5"}])] // http
+    [InlineData([new [] { "http://168.0.55:5000/api/resourceusage/readings", "20", "5"}])] // 3 octetcs instead of 4
     public void ValidateStartupArguments_InvalidServerPath_ArgumentExceptionThrown(string[] cliArguments)
     {
         //Arrange
@@ -49,12 +49,12 @@ public class ValidateStartupArgumentsTest : TestBase
     }
     
     [Theory]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "20.4568", "5"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "5asd"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "2,0", "5"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "s", "5"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "-20", "5"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "-5"}})]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "20.4568", "5"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "5asd"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "2,0", "5"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "s", "5"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "-20", "5"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "20", "-5"}])]
     public void ValidateStartupArguments_DurationAndIntervalIsNotInteger_ArgumentExceptionThrown(string[] cliArguments)
     {
         //Arrange
@@ -66,8 +66,8 @@ public class ValidateStartupArgumentsTest : TestBase
     }
     
     [Theory]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "9", "1"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "601", "1"}})]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "9", "1"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "601", "1"}])]
     public void ValidateStartupArguments_CollectingTimeMustBeBetween10And600Seconds_ArgumentExceptionThrown(string[] cliArguments)
     {
         //Arrange
@@ -79,8 +79,8 @@ public class ValidateStartupArgumentsTest : TestBase
     }
     
     [Theory]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "60", "0"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "60", "61"}})]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "60", "0"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "60", "61"}])]
     public void ValidateStartupArguments_IntervalBetweenCollectingMustBeBetween1And60Seconds_ArgumentExceptionThrown(string[] cliArguments)
     {
         //Arrange
@@ -92,8 +92,8 @@ public class ValidateStartupArgumentsTest : TestBase
     }
     
     [Theory]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "50", "50"}})]
-    [InlineData(new object[] {new string[] { "http://192.168.0.55:5000/api/resourceusage/readings", "50", "55"}})]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "50", "50"}])]
+    [InlineData([new [] { "http://192.168.0.55:5000/api/resourceusage/readings", "50", "55"}])]
     public void ValidateStartupArguments_IntervalBetweenCollectingCannotBeBiggerThanCollectingTimeInTotal_ArgumentExceptionThrown(string[] cliArguments)
     {
         //Arrange

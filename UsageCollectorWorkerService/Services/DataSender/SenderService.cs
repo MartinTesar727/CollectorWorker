@@ -1,32 +1,29 @@
+using System.Text;
+using System.Text.Json;
 using UsageCollectorWorkerService.Models;
-using UsageCollectorWorkerService.Services.DataHolder;
 
 namespace UsageCollectorWorkerService.Services.DataSender;
 
 public class SenderService : ISenderService
 {
     private readonly HttpClient _httpClient;
-    private readonly IDataHolderService _dataHolderService;
     
-    public SenderService(HttpClient httpClient, IDataHolderService dataHolderService)
+    public SenderService(HttpClient httpClient)
     {
-        _dataHolderService = dataHolderService;
         _httpClient = httpClient;
     }
 
-    public async Task PostRequestAsync(RootSysResUsageValues rootSysResUsageValues)
+    public async Task PostRequestAsync(List<SysResUsageValues> sysResUsageValues)
     {
         using HttpRequestMessage request = new();
         request.Method = HttpMethod.Post;
-        request.Content = _dataHolderService.CreateStringContentForPostRequest(rootSysResUsageValues);
+        request.Content = CreateStringContentForPostRequest(sysResUsageValues);
 
-        try
-        {
-            await _httpClient.SendAsync(request);
-        }
-        catch (Exception ex)
-        {
-            
-        }
+        await _httpClient.SendAsync(request);
+    }
+    
+    private StringContent CreateStringContentForPostRequest(List<SysResUsageValues> instance)
+    {
+        return new StringContent(JsonSerializer.Serialize(instance), Encoding.UTF8, "application/json");;
     }
 }

@@ -4,5 +4,5 @@ namespace UsageCollectorWorkerService.Services.DataSender;
 
 public interface ISenderService
 {
-    Task PostRequestAsync(RootSysResUsageValues rootSysResUsageValues);
+    Task PostRequestAsync(List<SysResUsageValues> sysResUsageValues);
 }

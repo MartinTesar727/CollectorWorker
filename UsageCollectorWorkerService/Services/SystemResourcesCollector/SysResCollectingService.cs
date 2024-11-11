@@ -1,5 +1,6 @@
 using FluentValidation;
 using UsageCollectorWorkerService.Models;
+using UsageCollectorWorkerService.Services.DataHolder;
 using UsageCollectorWorkerService.Services.LowLevelCollecting;
 
 namespace UsageCollectorWorkerService.Services.SystemResourcesCollector;
@@ -8,23 +9,24 @@ public class SysResCollectingService : ISysResCollectingService
 {
     private readonly ILowLevelCollectingSevice _lowLevelCollector;
     private readonly IValidator<SysResUsageValues> _gatheredValuesValidator;
+    private readonly IDataHolderService _dataHolderService;
     
-    public SysResCollectingService(IValidator<SysResUsageValues> gatheredValuesValidator, ILowLevelCollectingSevice lowLevelCollector)
+    public SysResCollectingService(
+        IValidator<SysResUsageValues> gatheredValuesValidator,
+        ILowLevelCollectingSevice lowLevelCollector,
+        IDataHolderService dataHolderService)
     {
-        _lowLevelCollector = lowLevelCollector;
         _gatheredValuesValidator = gatheredValuesValidator;
+        _lowLevelCollector = lowLevelCollector;
+        _dataHolderService = dataHolderService;
     }
 
     public async Task<List<SysResUsageValues>> CollectResourcesAsync(int durationOfCollectingInSeconds, int intervalBetweenCollectingInSeconds)
     {
-        DateTime endTimeOfCollecting = DateTime.Now.AddSeconds(durationOfCollectingInSeconds);
-     
-        List<SysResUsageValues> readings = new();
-
-        while (DateTime.Now < endTimeOfCollecting)
+        while (DateTime.Now < GetEndTimeOfCollecting(durationOfCollectingInSeconds))
         {
-            Task<int> cpu = _lowLevelCollector.GetCpuUsageInPercentAsync();
-            Task<int> ram = _lowLevelCollector.GetRamUsageInPercentAsync();
+            var cpu = _lowLevelCollector.GetCpuUsageInPercentAsync();
+            var ram = _lowLevelCollector.GetRamUsageInPercentAsync();
 
             await Task.WhenAll( cpu, ram );
 
@@ -35,12 +37,17 @@ public class SysResCollectingService : ISysResCollectingService
                 RamUsageInPercentage = ram.Result
             };
             
-            _gatheredValuesValidator.ValidateAndThrow(savedValue);
-            readings.Add(savedValue);
+            await _gatheredValuesValidator.ValidateAndThrowAsync(savedValue);
+            _dataHolderService.InsertValue(savedValue);
             
             await Task.Delay(TimeSpan.FromSeconds(intervalBetweenCollectingInSeconds));
         }
         
-        return readings;
+        return _dataHolderService.GetValues();
+    }
+
+    private DateTime GetEndTimeOfCollecting(int durationOfCollectingInSeconds)
+    {
+        return DateTime.Now.AddSeconds(durationOfCollectingInSeconds);
     }
 }

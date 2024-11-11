@@ -1,4 +1,3 @@
-using UsageCollectorWorkerService.Models;
 using UsageCollectorWorkerService.Services.DataHolder;
 using UsageCollectorWorkerService.Services.DataSender;
 using UsageCollectorWorkerService.Services.SystemResourcesCollector;
@@ -29,17 +28,18 @@ public class CollectorWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        RootSysResUsageValues dataHolder = _dataHolderService.Instance;         
+        prepis pomoci orchestratoru
+        var dataHolderValues = _dataHolderService.GetValues();         
         
         while (!stoppingToken.IsCancellationRequested)
         {
-            dataHolder.UsageValues = await _sysResCollectingService.CollectResourcesAsync(
+            dataHolderValues = await _sysResCollectingService.CollectResourcesAsync(
                 _durationOfCollectingInSeconds,
                 _intervalBetweenCollectingInSeconds);
             
-            await _senderService.PostRequestAsync(dataHolder);
+            await _senderService.PostRequestAsync(dataHolderValues);
             
-            await Task.Delay(1000, stoppingToken);
+            _dataHolderService.DeleteValues();
         }
     }
 }

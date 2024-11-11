@@ -4,6 +4,7 @@ namespace UsageCollectorWorkerService.Services.DataHolder;
 
 public interface IDataHolderService
 {
-    RootSysResUsageValues Instance { get; set; }
-    StringContent CreateStringContentForPostRequest(RootSysResUsageValues instance);
+    List<SysResUsageValues> GetValues();
+    void InsertValue(SysResUsageValues input);
+    void DeleteValues();
 }
