@@ -1,6 +1,7 @@
 using FluentValidation;
 using UsageCollectorWorkerService.BackgroundWorkers;
 using UsageCollectorWorkerService.Models;
+using UsageCollectorWorkerService.Orchestrators;
 using UsageCollectorWorkerService.Services.DataHolder;
 using UsageCollectorWorkerService.Services.DataSender;
 using UsageCollectorWorkerService.Services.LowLevelCollecting;
@@ -32,12 +33,14 @@ namespace UsageCollectorWorkerService
             builder.Services.AddSingleton<ISysResCollectingService, SysResCollectingService>();
             builder.Services.AddSingleton<ILowLevelCollectingSevice, LowLevelCollectingService>();
             
-            builder.Services.AddHostedService<CollectorWorker>(provider => new CollectorWorker(
+            builder.Services.AddSingleton<IClientOrchestrator>(provider => new ClientOrchestrator(
                 provider.GetRequiredService<IDataHolderService>(),
                 provider.GetRequiredService<ISenderService>(),
                 provider.GetRequiredService<ISysResCollectingService>(),
                 durationInSeconds,
                 intervalInSeconds));
+
+            builder.Services.AddHostedService<CollectorWorker>();
 
             builder.Services.AddSingleton<IValidator<SysResUsageValues>, SysResUsageValidator>();
             
